@@ -11,14 +11,14 @@
 
     #main1 {
       height: 100vh;
-      width: 50vw;
+      width: 100vw;
     }
 
     #main2 {
       height: 100vh;
-      width: 50vw;
-      position: absolute;
-      left: 50%;
+      width: 100vw;
+      /*position: absolute;*/
+      /*left: 50%;*/
     }
 
     text {
@@ -31,16 +31,16 @@
 <body>
 <svg id="main1">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z"/>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto">
+      <path d="M 0,0 V 8 L 12,4 Z"/>
     </marker>
   </defs>
   <g id="plain"></g>
 </svg>
 <svg id="main2">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z"/>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto">
+      <path d="M 0,0 V 8 L 12,4 Z"/>
     </marker>
   </defs>
 
@@ -49,112 +49,11 @@
   </g>
 </svg>
 
+<script src="node_modules/dagre/dist/dagre.min.js"></script>
 <script src="https://d3js.org/d3.v4.js"></script>
-<script>
-
-  var cellSize = 50;
-  var arrowMarkerHeight = 9;
-
-  const nodes = [
-    {
-      x: 0,
-      y: 0
-    },
-    {
-      x: 2,
-      y: 3,
-      color: 'red'
-    },
-    {
-      x: 4,
-      y: 1
-    },
-    {
-      x: 3,
-      y: 0
-    },
-    {
-      x: 3,
-      y: 5
-    },
-  ];
-
-  const arrows = [
-    {
-      from: 1,
-      to: 0
-    },
-    {
-      from: 1,
-      to: 2
-    },
-    {
-      from: 2,
-      to: 3
-    },
-    {
-      from: 3,
-      to: 4
-    }
-  ];
-
-  function simpleRectangle(selection, className) {
-    // drawing a rectangle with path:
-    // move -> horizontal line -> vertical line -> horizontal line -> vertical line
-    selection.append('path')
-      .attr('class', className)
-      .attr('d', d => `M 0 0 H ${cellSize} V ${cellSize} H 0 V 0 `)
-      .attr('transform', d => `translate(${d.x * cellSize} ${d.y * cellSize})`)
-      .attr('fill', d => d.color || 'transparent')
-      .attr('stroke', '#939393');
-  }
-
-  function arrowLine(selection, nodes) {
-    selection.append('path')
-      .attr('d', d => {
-        if (nodes[d.from].y > nodes[d.to].y) {
-          return `M ${nodes[d.from].x * cellSize + cellSize / 2} ${nodes[d.from].y * cellSize + cellSize / 2} H ${nodes[d.to].x * cellSize + cellSize / 2} V ${nodes[d.to].y * cellSize + cellSize + arrowMarkerHeight}`
-        } else {
-          return `M ${nodes[d.from].x * cellSize + cellSize / 2} ${nodes[d.from].y * cellSize + cellSize / 2} H ${nodes[d.to].x * cellSize + cellSize / 2} V ${nodes[d.to].y * cellSize - arrowMarkerHeight}`
-        }
-      })
-      .attr('marker-end', "url(#arrow)")
-      .attr('fill', 'transparent')
-      .attr('stroke', d => d.color || '#939393')
-  }
-
-
-  function draw(canvas) {
-    canvas.selectAll('path.arrow')
-      .data(arrows)
-      .enter()
-      .call(arrowLine, nodes)
-      .exit();
-
-    canvas.selectAll('path.node')
-      .data(nodes)
-      .enter()
-      .call(simpleRectangle, 'node')
-      //    .call(arrowLine)
-      .exit();
-
-    canvas.selectAll('text')
-      .data(nodes)
-      .enter()
-      .append('text')
-      .text((d, i) => `node #${i}`)
-      .attr('x', d => d.x * cellSize + 55)
-      .attr('y', d => d.y * cellSize + 27)
-      .attr('fill', 'black')
-      .attr('stroke', 'none')
-    //    .attr('transform', 'rotate(45)')
-    //    .attr('transform', 'matrix(0.707 0.409 -0.707 0.409 100.51 -14.78)');
-
-
-  }
-
-  draw(d3.select('svg#main1 g'));
-  draw(d3.select('svg#main2 g'));
-</script>
+<script src="src/data.js"></script>
+<script src="src/graph.js"></script>
+<script src="src/shapes.js"></script>
+<script src="src/main.js"></script>
 </body>
 </html>
